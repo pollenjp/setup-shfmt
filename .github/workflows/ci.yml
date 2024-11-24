@@ -49,11 +49,12 @@ jobs:
     strategy:
       matrix:
         host: [ubuntu-latest, macos-latest, windows-latest]
+        version: [latest, 3.10.0]
     runs-on: ${{ matrix.host }}
     steps:
       - uses: actions/checkout@v4
       - uses: ./
         with:
-          version: latest
+          version: ${{ matrix.version }}
       - name: check
         run: shfmt --version
