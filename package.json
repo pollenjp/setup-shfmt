@@ -1,16 +1,16 @@
 {
-  "name": "typescript-action",
-  "description": "GitHub Actions TypeScript template",
-  "version": "0.0.0",
-  "author": "",
+  "name": "setup-shfmt",
+  "description": "Install shfmt and cache it for GitHub Actions",
+  "version": "1.0.0",
+  "author": "pollenJP",
   "private": true,
-  "homepage": "https://github.com/actions/typescript-action",
+  "homepage": "https://github.com/pollenjp/setup-shfmt",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/actions/typescript-action.git"
+    "url": "git+https://github.com/pollenjp/setup-shfmt.git"
   },
   "bugs": {
-    "url": "https://github.com/actions/typescript-action/issues"
+    "url": "https://github.com/pollenjp/setup-shfmt/issues"
   },
   "keywords": [
     "actions",
@@ -34,7 +34,7 @@
     "package": "npx ncc build src/index.ts -o dist --source-map --license licenses.txt",
     "package:watch": "npm run package -- --watch",
     "test": "npx jest",
-    "all": "npm run format:write && npm run lint && npm run test && npm run coverage && npm run package"
+    "all": "npm run format:write && npm run lint && npm run fmt && npm run test && npm run coverage && npm run package"
   },
   "license": "MIT",
   "jest": {
@@ -67,7 +67,8 @@
     ]
   },
   "dependencies": {
-    "@actions/core": "^1.11.1"
+    "@actions/core": "^1.11.1",
+    "@actions/tool-cache": "^2.0.1"
   },
   "devDependencies": {
     "@github/local-action": "^2.2.0",
