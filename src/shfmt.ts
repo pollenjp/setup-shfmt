@@ -3,6 +3,7 @@ import * as tc from '@actions/tool-cache'
 import * as os from 'os'
 import { versionInput } from './inputs'
 import { CMD_NAME, OWNER, REPO, TOOL_CACHE_NAME } from './constants'
+import { exec } from 'child_process'
 export const setupShfmt = async (): Promise<void> => {
   const version = await getVersion(versionInput)
 
@@ -22,6 +23,10 @@ export const setupShfmt = async (): Promise<void> => {
     )
     core.info(`Downloaded to ${toolPath}`)
   }
+
+  // Add file permission to toolPath/CMD_NAME
+  exec(`chmod +x "${toolPath}/${CMD_NAME}"`)
+
   core.addPath(toolPath)
 }
 

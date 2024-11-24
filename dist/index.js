@@ -28393,6 +28393,7 @@ const tc = __importStar(__nccwpck_require__(3472));
 const os = __importStar(__nccwpck_require__(857));
 const inputs_1 = __nccwpck_require__(8422);
 const constants_1 = __nccwpck_require__(7242);
+const child_process_1 = __nccwpck_require__(5317);
 const setupShfmt = async () => {
     const version = await getVersion(inputs_1.versionInput);
     let toolPath = findVersionInHostedToolCacheDirectory(version);
@@ -28405,6 +28406,8 @@ const setupShfmt = async () => {
         toolPath = await tc.cacheFile(downloadPath, constants_1.CMD_NAME, constants_1.TOOL_CACHE_NAME, version);
         core.info(`Downloaded to ${toolPath}`);
     }
+    // Add file permission to toolPath/CMD_NAME
+    (0, child_process_1.exec)(`chmod +x "${toolPath}/${constants_1.CMD_NAME}"`);
     core.addPath(toolPath);
 };
 exports.setupShfmt = setupShfmt;
