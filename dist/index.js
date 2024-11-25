@@ -28302,9 +28302,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.versionInput = void 0;
+exports.githubTokenInput = exports.versionInput = void 0;
 const core = __importStar(__nccwpck_require__(7484));
 exports.versionInput = core.getInput('version');
+exports.githubTokenInput = core.getInput('github_token');
 
 
 /***/ }),
@@ -28404,7 +28405,7 @@ const setupShfmt = async () => {
     else {
         const fileName = `${constants_1.TOOL_CACHE_NAME}_v${version}_${translateOsPlatformToDistPlatformName()}_${translateArchToDistArchName()}`;
         const downloadPath = await tc.downloadTool(`${(0, exports.getDownloadBaseUrl)(version)}/${fileName}${translateOsPlatformToDistPlatformName() === 'windows' ? '.exe' : ''}`);
-        toolPath = await tc.cacheFile(downloadPath, constants_1.CMD_NAME, constants_1.TOOL_CACHE_NAME, version);
+        toolPath = await tc.cacheFile(downloadPath, constants_1.CMD_NAME, constants_1.TOOL_CACHE_NAME, version, translateArchToDistArchName());
         core.info(`Downloaded to ${toolPath}`);
     }
     // Add file permission to toolPath/CMD_NAME
@@ -28420,17 +28421,28 @@ exports.setupShfmt = setupShfmt;
 const getVersion = async (version) => {
     switch (version) {
         case 'latest': {
-            // curl -s https://api.github.com/repos/mvdan/sh/releases/latest | jq -r '.tag_name'
+            // curl -s https://api.github.com/repos/${OWNER}/${REPO}/releases/latest | jq -r '.tag_name'
             const response = await (async () => {
                 for (let i = 0; i < constants_1.RETRY_COUNT; i++) {
                     try {
-                        return await fetch(`https://api.github.com/repos/${constants_1.OWNER}/${constants_1.REPO}/releases/latest`);
+                        const res = await fetch(`https://api.github.com/repos/${constants_1.OWNER}/${constants_1.REPO}/releases/latest`, {
+                            headers: inputs_1.githubTokenInput
+                                ? {
+                                    Authorization: `Bearer ${inputs_1.githubTokenInput}`
+                                }
+                                : undefined
+                        });
+                        if (res.status !== 200) {
+                            throw new Error(`Fetching the latest release page (${res.statusText})`);
+                        }
+                        return res;
                     }
                     catch (error) {
-                        core.warning(`Failed to get the latest version of shfmt. (${error.message}) Retry... ${i + 1}/${constants_1.RETRY_COUNT}`);
+                        core.warning(`${error.message} Retry... ${i + 1}/${constants_1.RETRY_COUNT}`);
+                        await new Promise(resolve => setTimeout(resolve, 2000));
                     }
                 }
-                throw new Error('Failed to get the latest version of shfmt.');
+                throw new Error(`Failed to get the latest version. If the reason is rate limit, please set the github_token. https://github.com/actions/runner-images/issues/602`);
             })();
             const releaseResponse = (await response.json());
             const tagName = releaseResponse.tag_name;
@@ -28446,9 +28458,9 @@ const getVersion = async (version) => {
 const getDownloadBaseUrl = (version) => {
     switch (version) {
         case 'latest':
-            return new URL('https://github.com/mvdan/sh/releases/latest/download');
+            return new URL(`https://github.com/${constants_1.OWNER}/${constants_1.REPO}/releases/latest/download`);
         default:
-            return new URL(`https://github.com/mvdan/sh/releases/download/v${version}`);
+            return new URL(`https://github.com/${constants_1.OWNER}/${constants_1.REPO}/releases/download/v${version}`);
     }
 };
 exports.getDownloadBaseUrl = getDownloadBaseUrl;

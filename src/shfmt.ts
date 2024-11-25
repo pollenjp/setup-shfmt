@@ -1,7 +1,7 @@
 import * as core from '@actions/core'
 import * as tc from '@actions/tool-cache'
 import * as os from 'os'
-import { versionInput } from './inputs'
+import { versionInput, githubTokenInput } from './inputs'
 import {
   CMD_NAME,
   OWNER,
@@ -25,7 +25,8 @@ export const setupShfmt = async (): Promise<void> => {
       downloadPath,
       CMD_NAME,
       TOOL_CACHE_NAME,
-      version
+      version,
+      translateArchToDistArchName()
     )
     core.info(`Downloaded to ${toolPath}`)
   }
@@ -48,21 +49,36 @@ interface ReleaseResponse {
 const getVersion = async (version: string): Promise<string> => {
   switch (version) {
     case 'latest': {
-      // curl -s https://api.github.com/repos/mvdan/sh/releases/latest | jq -r '.tag_name'
-
+      // curl -s https://api.github.com/repos/${OWNER}/${REPO}/releases/latest | jq -r '.tag_name'
       const response = await (async () => {
         for (let i = 0; i < RETRY_COUNT; i++) {
           try {
-            return await fetch(
-              `https://api.github.com/repos/${OWNER}/${REPO}/releases/latest`
+            const res = await fetch(
+              `https://api.github.com/repos/${OWNER}/${REPO}/releases/latest`,
+              {
+                headers: githubTokenInput
+                  ? {
+                      Authorization: `Bearer ${githubTokenInput}`
+                    }
+                  : undefined
+              }
             )
+            if (res.status !== 200) {
+              throw new Error(
+                `Fetching the latest release page (${res.statusText})`
+              )
+            }
+            return res
           } catch (error) {
             core.warning(
-              `Failed to get the latest version of shfmt. (${(error as Error).message}) Retry... ${i + 1}/${RETRY_COUNT}`
+              `${(error as Error).message} Retry... ${i + 1}/${RETRY_COUNT}`
             )
+            await new Promise(resolve => setTimeout(resolve, 2000))
           }
         }
-        throw new Error('Failed to get the latest version of shfmt.')
+        throw new Error(
+          `Failed to get the latest version. If the reason is rate limit, please set the github_token. https://github.com/actions/runner-images/issues/602`
+        )
       })()
       const releaseResponse: ReleaseResponse =
         (await response.json()) as ReleaseResponse
@@ -80,10 +96,12 @@ const getVersion = async (version: string): Promise<string> => {
 export const getDownloadBaseUrl = (version: string): URL => {
   switch (version) {
     case 'latest':
-      return new URL('https://github.com/mvdan/sh/releases/latest/download')
+      return new URL(
+        `https://github.com/${OWNER}/${REPO}/releases/latest/download`
+      )
     default:
       return new URL(
-        `https://github.com/mvdan/sh/releases/download/v${version}`
+        `https://github.com/${OWNER}/${REPO}/releases/download/v${version}`
       )
   }
 }
