@@ -28302,9 +28302,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.versionInput = void 0;
+exports.githubTokenInput = exports.versionInput = void 0;
 const core = __importStar(__nccwpck_require__(7484));
 exports.versionInput = core.getInput('version');
+exports.githubTokenInput = core.getInput('github_token');
 
 
 /***/ }),
@@ -28420,12 +28421,18 @@ exports.setupShfmt = setupShfmt;
 const getVersion = async (version) => {
     switch (version) {
         case 'latest': {
-            // curl -s https://api.github.com/repos/mvdan/sh/releases/latest | jq -r '.tag_name'
+            // curl -s https://api.github.com/repos/${OWNER}/${REPO}/releases/latest | jq -r '.tag_name'
             const response = await (async () => {
                 for (let i = 0; i < constants_1.RETRY_COUNT; i++) {
                     try {
-                        const res = await fetch(`https://api.github.com/repos/${constants_1.OWNER}/${constants_1.REPO}/releases/latest`);
-                        if (!res.ok) {
+                        const res = await fetch(`https://api.github.com/repos/${constants_1.OWNER}/${constants_1.REPO}/releases/latest`, {
+                            headers: inputs_1.githubTokenInput
+                                ? {
+                                    Authorization: `Bearer ${inputs_1.githubTokenInput}`
+                                }
+                                : undefined
+                        });
+                        if (res.status !== 200) {
                             throw new Error(`Fetching the latest release page (${res.statusText})`);
                         }
                         return res;
@@ -28435,7 +28442,7 @@ const getVersion = async (version) => {
                         await new Promise(resolve => setTimeout(resolve, 2000));
                     }
                 }
-                throw new Error('Failed to get the latest version of shfmt.');
+                throw new Error(`Failed to get the latest version. If the reason is rate limit, please set the github_token. https://github.com/actions/runner-images/issues/602`);
             })();
             const releaseResponse = (await response.json());
             const tagName = releaseResponse.tag_name;

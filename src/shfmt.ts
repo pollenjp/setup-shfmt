@@ -1,7 +1,7 @@
 import * as core from '@actions/core'
 import * as tc from '@actions/tool-cache'
 import * as os from 'os'
-import { versionInput } from './inputs'
+import { versionInput, githubTokenInput } from './inputs'
 import {
   CMD_NAME,
   OWNER,
@@ -49,15 +49,21 @@ interface ReleaseResponse {
 const getVersion = async (version: string): Promise<string> => {
   switch (version) {
     case 'latest': {
-      // curl -s https://api.github.com/repos/mvdan/sh/releases/latest | jq -r '.tag_name'
-
+      // curl -s https://api.github.com/repos/${OWNER}/${REPO}/releases/latest | jq -r '.tag_name'
       const response = await (async () => {
         for (let i = 0; i < RETRY_COUNT; i++) {
           try {
             const res = await fetch(
-              `https://api.github.com/repos/${OWNER}/${REPO}/releases/latest`
+              `https://api.github.com/repos/${OWNER}/${REPO}/releases/latest`,
+              {
+                headers: githubTokenInput
+                  ? {
+                      Authorization: `Bearer ${githubTokenInput}`
+                    }
+                  : undefined
+              }
             )
-            if (!res.ok) {
+            if (res.status !== 200) {
               throw new Error(
                 `Fetching the latest release page (${res.statusText})`
               )
@@ -70,7 +76,9 @@ const getVersion = async (version: string): Promise<string> => {
             await new Promise(resolve => setTimeout(resolve, 2000))
           }
         }
-        throw new Error('Failed to get the latest version of shfmt.')
+        throw new Error(
+          `Failed to get the latest version. If the reason is rate limit, please set the github_token. https://github.com/actions/runner-images/issues/602`
+        )
       })()
       const releaseResponse: ReleaseResponse =
         (await response.json()) as ReleaseResponse
