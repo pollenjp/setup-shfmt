@@ -13,6 +13,7 @@ jobs:
       - uses: pollenjp/setup-shfmt@v1
         with:
           version: latest
+          # version: 3.10.0
       - uses: actions/checkout@v4
       - name: Run shfmt
         run: shfmt -d .
