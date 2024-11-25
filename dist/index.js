@@ -28263,11 +28263,12 @@ module.exports = v4;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.CMD_NAME = exports.TOOL_CACHE_NAME = exports.OWNER = exports.REPO = void 0;
+exports.RETRY_COUNT = exports.CMD_NAME = exports.TOOL_CACHE_NAME = exports.OWNER = exports.REPO = void 0;
 exports.REPO = 'sh';
 exports.OWNER = 'mvdan';
 exports.TOOL_CACHE_NAME = 'shfmt';
 exports.CMD_NAME = 'shfmt';
+exports.RETRY_COUNT = 3;
 
 
 /***/ }),
@@ -28420,7 +28421,17 @@ const getVersion = async (version) => {
     switch (version) {
         case 'latest': {
             // curl -s https://api.github.com/repos/mvdan/sh/releases/latest | jq -r '.tag_name'
-            const response = await fetch(`https://api.github.com/repos/${constants_1.OWNER}/${constants_1.REPO}/releases/latest`);
+            const response = await (async () => {
+                for (let i = 0; i < constants_1.RETRY_COUNT; i++) {
+                    try {
+                        return await fetch(`https://api.github.com/repos/${constants_1.OWNER}/${constants_1.REPO}/releases/latest`);
+                    }
+                    catch (error) {
+                        core.warning(`Failed to get the latest version of shfmt. (${error.message}) Retry... ${i + 1}/${constants_1.RETRY_COUNT}`);
+                    }
+                }
+                throw new Error('Failed to get the latest version of shfmt.');
+            })();
             const releaseResponse = (await response.json());
             const tagName = releaseResponse.tag_name;
             if (typeof tagName !== 'string') {

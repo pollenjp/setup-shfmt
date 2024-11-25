@@ -2,7 +2,13 @@ import * as core from '@actions/core'
 import * as tc from '@actions/tool-cache'
 import * as os from 'os'
 import { versionInput } from './inputs'
-import { CMD_NAME, OWNER, REPO, TOOL_CACHE_NAME } from './constants'
+import {
+  CMD_NAME,
+  OWNER,
+  REPO,
+  TOOL_CACHE_NAME,
+  RETRY_COUNT
+} from './constants'
 import { exec } from 'child_process'
 export const setupShfmt = async (): Promise<void> => {
   const version = await getVersion(versionInput)
@@ -43,9 +49,21 @@ const getVersion = async (version: string): Promise<string> => {
   switch (version) {
     case 'latest': {
       // curl -s https://api.github.com/repos/mvdan/sh/releases/latest | jq -r '.tag_name'
-      const response = await fetch(
-        `https://api.github.com/repos/${OWNER}/${REPO}/releases/latest`
-      )
+
+      const response = await (async () => {
+        for (let i = 0; i < RETRY_COUNT; i++) {
+          try {
+            return await fetch(
+              `https://api.github.com/repos/${OWNER}/${REPO}/releases/latest`
+            )
+          } catch (error) {
+            core.warning(
+              `Failed to get the latest version of shfmt. (${(error as Error).message}) Retry... ${i + 1}/${RETRY_COUNT}`
+            )
+          }
+        }
+        throw new Error('Failed to get the latest version of shfmt.')
+      })()
       const releaseResponse: ReleaseResponse =
         (await response.json()) as ReleaseResponse
       const tagName: string = releaseResponse.tag_name
