@@ -56,5 +56,8 @@ jobs:
       - uses: ./
         with:
           version: ${{ matrix.version }}
+      - uses: ./ # Check using cache by watching logs
+        with:
+          version: ${{ matrix.version }}
       - name: check
         run: shfmt --version
