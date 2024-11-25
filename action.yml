@@ -1,4 +1,4 @@
-name: 'setup-shfmt'
+name: 'setup-shfmt-action'
 description: 'Install shfmt and cache it for GitHub Actions'
 author: 'pollenJP'
 
