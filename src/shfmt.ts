@@ -54,13 +54,20 @@ const getVersion = async (version: string): Promise<string> => {
       const response = await (async () => {
         for (let i = 0; i < RETRY_COUNT; i++) {
           try {
-            return await fetch(
+            const res = await fetch(
               `https://api.github.com/repos/${OWNER}/${REPO}/releases/latest`
             )
+            if (!res.ok) {
+              throw new Error(
+                `Fetching the latest release page (${res.statusText})`
+              )
+            }
+            return res
           } catch (error) {
             core.warning(
-              `Failed to get the latest version of shfmt. (${(error as Error).message}) Retry... ${i + 1}/${RETRY_COUNT}`
+              `${(error as Error).message} Retry... ${i + 1}/${RETRY_COUNT}`
             )
+            await new Promise(resolve => setTimeout(resolve, 2000))
           }
         }
         throw new Error('Failed to get the latest version of shfmt.')
