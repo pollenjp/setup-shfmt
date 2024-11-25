@@ -28404,7 +28404,7 @@ const setupShfmt = async () => {
     else {
         const fileName = `${constants_1.TOOL_CACHE_NAME}_v${version}_${translateOsPlatformToDistPlatformName()}_${translateArchToDistArchName()}`;
         const downloadPath = await tc.downloadTool(`${(0, exports.getDownloadBaseUrl)(version)}/${fileName}${translateOsPlatformToDistPlatformName() === 'windows' ? '.exe' : ''}`);
-        toolPath = await tc.cacheFile(downloadPath, constants_1.CMD_NAME, constants_1.TOOL_CACHE_NAME, version);
+        toolPath = await tc.cacheFile(downloadPath, constants_1.CMD_NAME, constants_1.TOOL_CACHE_NAME, version, translateArchToDistArchName());
         core.info(`Downloaded to ${toolPath}`);
     }
     // Add file permission to toolPath/CMD_NAME
@@ -28446,9 +28446,9 @@ const getVersion = async (version) => {
 const getDownloadBaseUrl = (version) => {
     switch (version) {
         case 'latest':
-            return new URL('https://github.com/mvdan/sh/releases/latest/download');
+            return new URL(`https://github.com/${constants_1.OWNER}/${constants_1.REPO}/releases/latest/download`);
         default:
-            return new URL(`https://github.com/mvdan/sh/releases/download/v${version}`);
+            return new URL(`https://github.com/${constants_1.OWNER}/${constants_1.REPO}/releases/download/v${version}`);
     }
 };
 exports.getDownloadBaseUrl = getDownloadBaseUrl;

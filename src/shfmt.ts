@@ -25,7 +25,8 @@ export const setupShfmt = async (): Promise<void> => {
       downloadPath,
       CMD_NAME,
       TOOL_CACHE_NAME,
-      version
+      version,
+      translateArchToDistArchName()
     )
     core.info(`Downloaded to ${toolPath}`)
   }
@@ -80,10 +81,12 @@ const getVersion = async (version: string): Promise<string> => {
 export const getDownloadBaseUrl = (version: string): URL => {
   switch (version) {
     case 'latest':
-      return new URL('https://github.com/mvdan/sh/releases/latest/download')
+      return new URL(
+        `https://github.com/${OWNER}/${REPO}/releases/latest/download`
+      )
     default:
       return new URL(
-        `https://github.com/mvdan/sh/releases/download/v${version}`
+        `https://github.com/${OWNER}/${REPO}/releases/download/v${version}`
       )
   }
 }

@@ -1,7 +1,7 @@
 {
   "name": "setup-shfmt",
   "description": "Install shfmt and cache it for GitHub Actions",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "author": "pollenJP",
   "private": true,
   "homepage": "https://github.com/pollenjp/setup-shfmt",
