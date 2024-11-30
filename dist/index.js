@@ -28315,7 +28315,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.githubTokenInput = exports.versionInput = void 0;
 const core = __importStar(__nccwpck_require__(7484));
 exports.versionInput = core.getInput('version');
-exports.githubTokenInput = core.getInput('github_token');
+exports.githubTokenInput = core.getInput('github-token');
 
 
 /***/ }),
@@ -28472,7 +28472,7 @@ const getVersion = async (version) => {
                         await new Promise(resolve => setTimeout(resolve, 2000));
                     }
                 }
-                throw new Error(`Failed to get the latest version. If the reason is rate limit, please set the github_token. https://github.com/actions/runner-images/issues/602`);
+                throw new Error(`Failed to get the latest version. If the reason is rate limit, please set the github-token. https://github.com/actions/runner-images/issues/602`);
             })();
             const releaseResponse = (await response.json());
             const tagName = releaseResponse.tag_name;

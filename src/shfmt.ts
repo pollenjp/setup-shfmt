@@ -77,7 +77,7 @@ const getVersion = async (version: string): Promise<string> => {
           }
         }
         throw new Error(
-          `Failed to get the latest version. If the reason is rate limit, please set the github_token. https://github.com/actions/runner-images/issues/602`
+          `Failed to get the latest version. If the reason is rate limit, please set the github-token. https://github.com/actions/runner-images/issues/602`
         )
       })()
       const releaseResponse: ReleaseResponse =
