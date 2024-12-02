@@ -22,5 +22,7 @@ jobs:
 ## Compare with other actions
 
 - [mfinelli/setup-shfmt](https://github.com/mfinelli/setup-shfmt)
-  - This actions is not caching, and is installing shfmt to `$HOME/bin` which is
-    not desirable for self-hosted runners.
+  - This actions is
+    [not caching](https://github.com/mfinelli/setup-shfmt/blob/d9998666636b952a610a923ce3eea22cf21b9705/src/index.ts#L79-L84),
+    and is installing shfmt to `$HOME/bin` which is not desirable for
+    self-hosted runners.
