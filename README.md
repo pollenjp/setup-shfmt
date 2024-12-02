@@ -18,3 +18,9 @@ jobs:
       - name: Run shfmt
         run: shfmt -d .
 ```
+
+## Compare with other actions
+
+- [mfinelli/setup-shfmt](https://github.com/mfinelli/setup-shfmt)
+  - This actions is not caching, and is installing shfmt to `$HOME/bin` which is
+    not desirable for self-hosted runners.
