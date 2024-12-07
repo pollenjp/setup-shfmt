@@ -19,6 +19,28 @@ jobs:
         run: shfmt -d .
 ```
 
+If you use GitHub Enterprise Server, set the specific version (`X.Y.Z`), or set
+`github-token` empty and `version: latest`.
+
+```yaml
+jobs:
+  shellcheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: pollenjp/setup-shfmt@v1
+        with:
+          version: 3.10.0
+          #
+          #or
+          #
+          # version: latest  # 'latest' requests GitHub API (github.com)
+          # github-token: '' # Empty token may result in reaching the rate limit
+          #                  # for anonymous requests
+      - uses: actions/checkout@v4
+      - name: Run shfmt
+        run: shfmt -d .
+```
+
 ## Compare with other actions
 
 - [mfinelli/setup-shfmt](https://github.com/mfinelli/setup-shfmt)
