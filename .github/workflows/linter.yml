@@ -44,16 +44,12 @@ jobs:
           FILTER_REGEX_EXCLUDE: dist/**/*
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VALIDATE_ALL_CODEBASE: true
-          VALIDATE_JAVASCRIPT_STANDARD: false
-          VALIDATE_JSCPD: false
-          VALIDATE_TYPESCRIPT_STANDARD: false
           ESLINT_USE_FLAT_CONFIG: false
           JAVASCRIPT_ES_CONFIG_FILE: .eslintrc.yml
           TYPESCRIPT_ES_CONFIG_FILE: .eslintrc.yml
-          VALIDATE_JAVASCRIPT_PRETTIER: false
-          VALIDATE_TYPESCRIPT_PRETTIER: false
-          VALIDATE_JSON: false
-          VALIDATE_JSONC: false
-          VALIDATE_JSON_PRETTIER: false
-          VALIDATE_JSONC_PRETTIER: false
           ENABLE_GITHUB_ACTIONS_STEP_SUMMARY: false
+          VALIDATE_TYPESCRIPT_ES: true
+          VALIDATE_JAVASCRIPT_ES: true
+          VALIDATE_YAML: true
+          VALIDATE_MARKDOWN: true
+          VALIDATE_BASH: true
