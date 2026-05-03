@@ -52,3 +52,4 @@ jobs:
           TYPESCRIPT_ES_CONFIG_FILE: .eslintrc.yml
           VALIDATE_JAVASCRIPT_PRETTIER: false
           VALIDATE_TYPESCRIPT_PRETTIER: false
+          ENABLE_GITHUB_ACTIONS_STEP_SUMMARY: false
