@@ -1,6 +1,5 @@
-import * as core from '@actions/core'
 import * as os from 'os'
-import { versionInput, githubTokenInput } from './inputs'
+import { getVersionInput, getGithubTokenInput } from './inputs'
 import {
   CMD_NAME,
   OWNER,
@@ -10,14 +9,18 @@ import {
 } from './constants'
 import { exec } from 'child_process'
 
-// `@actions/tool-cache` v4+ is ESM-only, so it must be loaded via dynamic
-// import to remain consumable from this CommonJS bundle (and from Jest).
+// `@actions/core` v3+ and `@actions/tool-cache` v4+ are ESM-only, so they must
+// be loaded via dynamic import to remain consumable from this CommonJS bundle
+// (and from Jest).
+const loadCore = async (): Promise<typeof import('@actions/core')> =>
+  await import('@actions/core')
 const loadToolCache = async (): Promise<typeof import('@actions/tool-cache')> =>
   await import('@actions/tool-cache')
 
 export const setupShfmt = async (): Promise<void> => {
+  const core = await loadCore()
   const tc = await loadToolCache()
-  const version = await getVersion(versionInput)
+  const version = await getVersion(await getVersionInput())
 
   let toolPath = tc.find(
     TOOL_CACHE_NAME,
@@ -59,6 +62,8 @@ interface ReleaseResponse {
 const getVersion = async (version: string): Promise<string> => {
   switch (version) {
     case 'latest': {
+      const core = await loadCore()
+      const githubTokenInput = await getGithubTokenInput()
       // curl -s https://api.github.com/repos/${OWNER}/${REPO}/releases/latest | jq -r '.tag_name'
       const response = await (async () => {
         for (let i = 0; i < RETRY_COUNT; i++) {
