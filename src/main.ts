@@ -1,5 +1,9 @@
-import * as core from '@actions/core'
 import { setupShfmt } from './shfmt'
+
+// `@actions/core` v3+ is ESM-only, so it must be loaded via dynamic import to
+// remain consumable from this CommonJS bundle (and from Jest).
+const loadCore = async (): Promise<typeof import('@actions/core')> =>
+  await import('@actions/core')
 
 /**
  * The main function for the action.
@@ -10,6 +14,9 @@ export async function run(): Promise<void> {
     await setupShfmt()
   } catch (error) {
     // Fail the workflow run if an error occurs
-    if (error instanceof Error) core.setFailed(error.message)
+    if (error instanceof Error) {
+      const core = await loadCore()
+      core.setFailed(error.message)
+    }
   }
 }
