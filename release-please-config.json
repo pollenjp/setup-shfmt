@@ -1,0 +1,12 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "release-type": "node",
+  "include-component-in-tag": false,
+  "include-v-in-tag": true,
+  "bootstrap-sha": "acbebabc96d1d2313906e7bd023bcd1e94ee0804",
+  "packages": {
+    ".": {
+      "package-name": "setup-shfmt"
+    }
+  }
+}
