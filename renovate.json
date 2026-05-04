@@ -1,6 +1,6 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:recommended", ":semanticCommits", "schedule:weekly"],
+  "extends": ["config:best-practices", ":semanticCommits", "schedule:weekly"],
   "minimumReleaseAge": "14 days",
   "platformAutomerge": true,
   "lockFileMaintenance": {
