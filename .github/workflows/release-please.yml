@@ -14,9 +14,20 @@ jobs:
     name: release-please
     runs-on: ubuntu-latest
     steps:
+      # Generating a GitHub token, so that PRs and tags created by
+      # the release-plz-action can trigger actions workflows.
+      - name: Generate GitHub token
+        uses: actions/create-github-app-token@v2
+        id: generate-token
+        with:
+          # GitHub App ID secret name
+          app-id: ${{ secrets.RELEASE_PLEASE_APP_ID }}
+          # GitHub App private key secret name
+          private-key: ${{ secrets.RELEASE_PLEASE_APP_PRIVATE_KEY }}
       - name: Run release-please
         id: release
         uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
         with:
+          token: ${{ steps.generate-token.outputs.token }}
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
