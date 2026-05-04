@@ -1,5 +1,4 @@
 import * as core from '@actions/core'
-import * as tc from '@actions/tool-cache'
 import * as os from 'os'
 import { versionInput, githubTokenInput } from './inputs'
 import {
@@ -10,10 +9,21 @@ import {
   RETRY_COUNT
 } from './constants'
 import { exec } from 'child_process'
+
+// `@actions/tool-cache` v4+ is ESM-only, so it must be loaded via dynamic
+// import to remain consumable from this CommonJS bundle (and from Jest).
+const loadToolCache = async (): Promise<typeof import('@actions/tool-cache')> =>
+  await import('@actions/tool-cache')
+
 export const setupShfmt = async (): Promise<void> => {
+  const tc = await loadToolCache()
   const version = await getVersion(versionInput)
 
-  let toolPath = findVersionInHostedToolCacheDirectory(version)
+  let toolPath = tc.find(
+    TOOL_CACHE_NAME,
+    version,
+    translateArchToDistArchName()
+  )
   if (toolPath) {
     core.info(`Found in cache @ ${toolPath}`)
   } else {
@@ -104,10 +114,6 @@ export const getDownloadBaseUrl = (version: string): URL => {
         `https://github.com/${OWNER}/${REPO}/releases/download/v${version}`
       )
   }
-}
-
-const findVersionInHostedToolCacheDirectory = (version: string): string => {
-  return tc.find(TOOL_CACHE_NAME, version, translateArchToDistArchName())
 }
 
 const translateOsPlatformToDistPlatformName = (): string => {
