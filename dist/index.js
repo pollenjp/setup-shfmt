@@ -25,7 +25,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getGithubTokenInput = exports.getVersionInput = void 0;
 // `@actions/core` v3+ is ESM-only, so it must be loaded via dynamic import to
 // remain consumable from this CommonJS bundle (and from Jest).
-const loadCore = async () => await __nccwpck_require__.e(/* import() */ 398).then(__nccwpck_require__.bind(__nccwpck_require__, 2398));
+const loadCore = async () => await __nccwpck_require__.e(/* import() */ 58).then(__nccwpck_require__.bind(__nccwpck_require__, 6058));
 const getVersionInput = async () => {
     const core = await loadCore();
     return core.getInput('version');
@@ -49,7 +49,7 @@ exports.run = run;
 const shfmt_1 = __nccwpck_require__(3461);
 // `@actions/core` v3+ is ESM-only, so it must be loaded via dynamic import to
 // remain consumable from this CommonJS bundle (and from Jest).
-const loadCore = async () => await __nccwpck_require__.e(/* import() */ 398).then(__nccwpck_require__.bind(__nccwpck_require__, 2398));
+const loadCore = async () => await __nccwpck_require__.e(/* import() */ 58).then(__nccwpck_require__.bind(__nccwpck_require__, 6058));
 /**
  * The main function for the action.
  * @returns {Promise<void>} Resolves when the action is complete.
@@ -116,8 +116,8 @@ const child_process_1 = __nccwpck_require__(5317);
 // `@actions/core` v3+ and `@actions/tool-cache` v4+ are ESM-only, so they must
 // be loaded via dynamic import to remain consumable from this CommonJS bundle
 // (and from Jest).
-const loadCore = async () => await __nccwpck_require__.e(/* import() */ 398).then(__nccwpck_require__.bind(__nccwpck_require__, 2398));
-const loadToolCache = async () => await Promise.all(/* import() */[__nccwpck_require__.e(398), __nccwpck_require__.e(756)]).then(__nccwpck_require__.bind(__nccwpck_require__, 756));
+const loadCore = async () => await __nccwpck_require__.e(/* import() */ 58).then(__nccwpck_require__.bind(__nccwpck_require__, 6058));
+const loadToolCache = async () => await Promise.all(/* import() */[__nccwpck_require__.e(58), __nccwpck_require__.e(805)]).then(__nccwpck_require__.bind(__nccwpck_require__, 9805));
 const setupShfmt = async () => {
     const core = await loadCore();
     const tc = await loadToolCache();
