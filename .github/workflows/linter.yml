@@ -44,6 +44,10 @@ jobs:
           FILTER_REGEX_EXCLUDE: (dist/.*|CHANGELOG\.md)
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VALIDATE_ALL_CODEBASE: true
+          # eslint.config.mjs uses `import.meta.dirname` to anchor tsconfig
+          # paths to the repo root, so point super-linter's config lookup at
+          # the root instead of the default `.github/linters` directory.
+          LINTER_RULES_PATH: .
           ESLINT_USE_FLAT_CONFIG: true
           JAVASCRIPT_ES_CONFIG_FILE: eslint.config.mjs
           TYPESCRIPT_ES_CONFIG_FILE: eslint.config.mjs
